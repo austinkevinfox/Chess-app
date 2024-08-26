@@ -3,290 +3,84 @@ import React, { useState } from "react";
 import Board from "./Board";
 import FileRow from "./File/FileRow";
 import RankColumn from "./Rank/RankColumn";
-import Controls from "./Controls";
-
-export interface BoardPosition {
-    annotation: string;
-    piece: string;
-}
-
-export const initBoardPositions: BoardPosition[] = [
-    { annotation: "blank", piece: "blank" },
-    {
-        annotation: "a8",
-        piece: "&#9820;",
-    },
-    {
-        annotation: "b8",
-        piece: "&#9822;",
-    },
-    {
-        annotation: "c8",
-        piece: "&#9821;",
-    },
-    {
-        annotation: "d8",
-        piece: "&#9819;",
-    },
-    {
-        annotation: "e8",
-        piece: "&#9818;",
-    },
-    {
-        annotation: "f8",
-        piece: "&#9821;",
-    },
-    {
-        annotation: "g8",
-        piece: "&#9822;",
-    },
-    {
-        annotation: "h8",
-        piece: "&#9820;",
-    },
-    {
-        annotation: "a7",
-        piece: "&#9823",
-    },
-    {
-        annotation: "b7",
-        piece: "&#9823",
-    },
-    {
-        annotation: "c7",
-        piece: "&#9823",
-    },
-    {
-        annotation: "d7",
-        piece: "&#9823;",
-    },
-    {
-        annotation: "e7",
-        piece: "&#9823;",
-    },
-    {
-        annotation: "f7",
-        piece: "&#9823;",
-    },
-    {
-        annotation: "g7",
-        piece: "&#9823;",
-    },
-    {
-        annotation: "h7",
-        piece: "&#9823;",
-    },
-    {
-        annotation: "a6",
-        piece: "",
-    },
-    {
-        annotation: "b6",
-        piece: "",
-    },
-    {
-        annotation: "c6",
-        piece: "",
-    },
-    {
-        annotation: "d6",
-        piece: "",
-    },
-    {
-        annotation: "e6",
-        piece: "",
-    },
-    {
-        annotation: "f6",
-        piece: "",
-    },
-    {
-        annotation: "g6",
-        piece: "",
-    },
-    {
-        annotation: "h6",
-        piece: "",
-    },
-    {
-        annotation: "a5",
-        piece: "",
-    },
-    {
-        annotation: "b5",
-        piece: "",
-    },
-    {
-        annotation: "c5",
-        piece: "",
-    },
-    {
-        annotation: "d5",
-        piece: "",
-    },
-    {
-        annotation: "e5",
-        piece: "",
-    },
-    {
-        annotation: "f5",
-        piece: "",
-    },
-    {
-        annotation: "g5",
-        piece: "",
-    },
-    {
-        annotation: "h5",
-        piece: "",
-    },
-    {
-        annotation: "a4",
-        piece: "",
-    },
-    {
-        annotation: "b4",
-        piece: "",
-    },
-    {
-        annotation: "c4",
-        piece: "",
-    },
-    {
-        annotation: "d4",
-        piece: "",
-    },
-    {
-        annotation: "e4",
-        piece: "",
-    },
-    {
-        annotation: "f4",
-        piece: "",
-    },
-    {
-        annotation: "g4",
-        piece: "",
-    },
-    {
-        annotation: "h4",
-        piece: "",
-    },
-    {
-        annotation: "a3",
-        piece: "",
-    },
-    {
-        annotation: "b3",
-        piece: "",
-    },
-    {
-        annotation: "c3",
-        piece: "",
-    },
-    {
-        annotation: "d3",
-        piece: "",
-    },
-    {
-        annotation: "e3",
-        piece: "",
-    },
-    {
-        annotation: "f3",
-        piece: "",
-    },
-    {
-        annotation: "g3",
-        piece: "",
-    },
-    {
-        annotation: "h3",
-        piece: "",
-    },
-    {
-        annotation: "a2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "b2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "c2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "d2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "e2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "f2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "g2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "h2",
-        piece: "&#9817",
-    },
-    {
-        annotation: "a1",
-        piece: "&#9814",
-    },
-    {
-        annotation: "b1",
-        piece: "&#9816",
-    },
-    {
-        annotation: "c1",
-        piece: "&#9815",
-    },
-    {
-        annotation: "d1",
-        piece: "&#9813",
-    },
-    {
-        annotation: "e1",
-        piece: "&#9812",
-    },
-    {
-        annotation: "f1",
-        piece: "&#9815",
-    },
-    {
-        annotation: "g1",
-        piece: "&#9816",
-    },
-    {
-        annotation: "h1",
-        piece: "&#9814",
-    },
-];
+import ControlsModal from "./Controls/ControlsModal";
+import { BoardPosition, Piece } from "./Interfaces";
+import { initialBoardPositions } from "./AlgebraicPositionServices/AlgebraicNotationConstants";
+import SidePanel from "./SidePanel";
 
 const Game = () => {
+    const [activePlayer, setActivePlayer] = useState("white");
     const [isRankAndFileVisible, setIsRankAndFileVisible] = useState(false);
-    const [boardPositions, setBoardPositions] =
-        useState<BoardPosition[]>(initBoardPositions);
+    const [boardPositions, setBoardPositions] = useState<BoardPosition[]>(
+        initialBoardPositions
+    );
+    const [capturedWhite, setCapturedWhite] = useState<string[]>([]);
+    const [capturedBlack, setCapturedBlack] = useState<string[]>([]);
 
-    const toggleRankAndFile = () => {
+    const toggleActivePlayer = (): void => {
+        let player = activePlayer === "white" ? "black" : "white";
+        console.log("active play is now", player);
+        setActivePlayer(player);
+    };
+
+    const toggleRankAndFile = (): void => {
         let tmpVisibility = isRankAndFileVisible;
         setIsRankAndFileVisible(!tmpVisibility);
     };
 
+    const capturePiece = (dropPosition: BoardPosition): void => {
+        if (dropPosition.piece!.color === "white") {
+            let tmpCapturedWhitePieces = [...capturedWhite];
+            tmpCapturedWhitePieces.push(dropPosition.piece!.code);
+            setCapturedWhite(tmpCapturedWhitePieces);
+        } else {
+            let tmpCapturedPieces = [...capturedBlack];
+            tmpCapturedPieces.push(dropPosition.piece!.code);
+            setCapturedBlack(tmpCapturedPieces);
+        }
+
+        
+    };
+
+    const updatePosition = (
+        id: number,
+        piece: Piece,
+        pieceInDrag: number
+    ): void => {
+        let tmpBoardPositions: BoardPosition[] = [...boardPositions];
+        let dropPosition: BoardPosition = Object.values(tmpBoardPositions)[id];
+        let emptyPosition: BoardPosition =
+            Object.values(tmpBoardPositions)[pieceInDrag];
+
+        if (dropPosition?.piece) {
+            capturePiece(dropPosition);
+        }
+
+        dropPosition.piece = piece;
+        emptyPosition.piece = null;
+        setBoardPositions(tmpBoardPositions);
+        toggleActivePlayer();
+    };
+
     return boardPositions ? (
-        <div className="container w-fit grid grid-cols-[25px,1fr] gap-4">
-            <Controls toggleRankAndFile={toggleRankAndFile} />
-            <FileRow isVisible={isRankAndFileVisible} />
-            <RankColumn isVisible={isRankAndFileVisible} />
-            <Board positions={boardPositions} />
-        </div>
+        <>
+            <ControlsModal toggleRankAndFile={toggleRankAndFile} />
+            <div className="container mx-auto w-fit flex justify-center">
+                <SidePanel color="black" isActive={activePlayer === "black"}>
+                    {capturedWhite}
+                </SidePanel>
+                <div className="grid grid-cols-[25px, 1fr] gap-4">
+                    <FileRow isVisible={isRankAndFileVisible} />
+                    <RankColumn isVisible={isRankAndFileVisible} />
+                    <Board
+                        activePlayer={activePlayer}
+                        positions={boardPositions}
+                        onPiecePositionChange={updatePosition}
+                    />
+                </div>
+                <SidePanel color="white" isActive={activePlayer === "white"}>{capturedBlack}</SidePanel>
+            </div>
+        </>
     ) : null;
 };
 
