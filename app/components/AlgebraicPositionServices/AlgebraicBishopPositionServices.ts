@@ -40,3 +40,32 @@ export const getAlgebraicBishopMoves = (
         ...southEastDiagonal,
     ];
 };
+
+export const getBishopThreats = (
+    kingSquareNotation: string,
+    positions: BoardPosition[],
+    activePlayer: string
+): string[] => {
+    let bishopThreats: string[] = [];
+    const tmpPositions = [...positions];
+    const [file, rank] = kingSquareNotation.split("");
+    const algebraicBishopNotations = getAlgebraicBishopMoves(
+        file,
+        rank,
+        positions,
+        activePlayer
+    );
+    algebraicBishopNotations.forEach((notation) => {
+        const bishopPosition = tmpPositions.find(
+            (position) =>
+                position.algebraicNotation === notation &&
+                position.piece?.name === "bishop" &&
+                position.piece?.color !== activePlayer
+        );
+        if (bishopPosition) {
+            bishopThreats.push(bishopPosition.algebraicNotation);
+        }
+    });
+
+    return bishopThreats;
+};

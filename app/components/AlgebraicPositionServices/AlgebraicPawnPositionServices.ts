@@ -1,4 +1,4 @@
-import { BoardPosition } from "../Interfaces";
+import { BoardPosition, Piece, EnPassan } from "../Interfaces";
 import {
     getNorthFile1Space,
     getSouthFile1Space,
@@ -12,6 +12,7 @@ export const getAlgebraicPawnMoves = (
     file: string,
     rank: string,
     boardPositions: BoardPosition[],
+    enPassanNotation: EnPassan | null,
     activePlayer: string
 ): string[] => {
     let pawnMoves: string[];
@@ -35,14 +36,29 @@ export const getAlgebraicPawnMoves = (
 
         pawnMoves = [...northFile];
 
+        if (rank === "2") {
+            // Two square open is allowed
+            pawnMoves.push(`${file}4`);
+        }
+
         if (
-            isPawnAbleToCapture(boardPositions, northEastDiagonal, activePlayer)
+            isPawnAbleToCapture(
+                boardPositions,
+                northEastDiagonal,
+                enPassanNotation,
+                activePlayer
+            )
         ) {
             pawnMoves = [...pawnMoves, ...northEastDiagonal];
         }
 
         if (
-            isPawnAbleToCapture(boardPositions, northWestDiagonal, activePlayer)
+            isPawnAbleToCapture(
+                boardPositions,
+                northWestDiagonal,
+                enPassanNotation,
+                activePlayer
+            )
         ) {
             pawnMoves = [...pawnMoves, ...northWestDiagonal];
         }
@@ -65,14 +81,29 @@ export const getAlgebraicPawnMoves = (
 
         pawnMoves = [...southFile];
 
+        if (rank === "7") {
+            // Two square open is allowed
+            pawnMoves.push(`${file}5`);
+        }
+
         if (
-            isPawnAbleToCapture(boardPositions, southEastDiagonal, activePlayer)
+            isPawnAbleToCapture(
+                boardPositions,
+                southEastDiagonal,
+                enPassanNotation,
+                activePlayer
+            )
         ) {
             pawnMoves = [...pawnMoves, ...southEastDiagonal];
         }
 
         if (
-            isPawnAbleToCapture(boardPositions, southWestDiagonal, activePlayer)
+            isPawnAbleToCapture(
+                boardPositions,
+                southWestDiagonal,
+                enPassanNotation,
+                activePlayer
+            )
         ) {
             pawnMoves = [...pawnMoves, ...southWestDiagonal];
         }
@@ -81,24 +112,55 @@ export const getAlgebraicPawnMoves = (
     return pawnMoves;
 };
 
+interface EnPassanNotationProps {
+    positions: BoardPosition[];
+    squareIndex: number;
+    source: number;
+    target: number;
+    activePlayer: string;
+}
+
+export const getEnPassanNotation = ({
+    positions,
+    squareIndex,
+    source,
+    target,
+    activePlayer,
+}: EnPassanNotationProps): EnPassan | null => {
+    const tmpPositions = [...positions];
+    const tmpPiece = tmpPositions[squareIndex].piece!;
+    if (isPawnMove2SquareOpening(tmpPiece, source, target)) {
+        const indices = [1, 2].map((j) =>
+            activePlayer === "white" ? squareIndex - 8 * j : squareIndex + 8 * j
+        );
+        const enPassonObject: EnPassan = {
+            captureSquareNotation: tmpPositions[indices[1]].algebraicNotation,
+            landingSquareNotation: tmpPositions[indices[0]].algebraicNotation,
+        };
+        return enPassonObject;
+    } else {
+        return null;
+    }
+};
+
+const isPawnMove2SquareOpening = (
+    piece: Piece,
+    source: number,
+    target: number
+): boolean => piece.name === "pawn" && Math.abs(source + 1 - target) === 16;
+
 const isPawnAbleToCapture = (
     boardPositions: BoardPosition[],
     targetPositions: string[],
+    enPassanNotation: EnPassan | null,
     activePlayer: string
-): boolean =>
-    boardPositions.find(
+): boolean => {
+    const targetSquare = boardPositions.find(
         (position) => position.algebraicNotation === targetPositions[0]
-    )?.piece?.color !== activePlayer;
-
-const getAlgebraicPawnPositionsByStep = (
-    file: string,
-    rank: number,
-    step: number
-): string[] => {
-    let result: string[] = [];
-    let tmpRank = rank + step;
-    if (tmpRank >= 1 && tmpRank <= 8) {
-        result.push(file + tmpRank);
-    }
-    return result;
+    );
+    return (
+        (targetSquare?.piece !== null &&
+            targetSquare?.piece.color !== activePlayer) ||
+        enPassanNotation?.landingSquareNotation === targetPositions[0]
+    );
 };

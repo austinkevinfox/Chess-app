@@ -1,5 +1,14 @@
 import { BoardPosition } from "../Interfaces";
-export const FILE_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h"];
+export enum Files {
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+    g,
+    h,
+}
 export const initialBoardPositions: BoardPosition[] = [
     {
         algebraicNotation: "a8",

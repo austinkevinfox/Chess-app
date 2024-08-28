@@ -14,7 +14,9 @@ export const getAlgebraicKingMoves = (
     file: string,
     rank: string,
     boardPositions: BoardPosition[],
-    activePlayer: string
+    activePlayer: string,
+    isKingSideCastleAvailable: boolean,
+    isQueenSideCastleAvailable: boolean
 ): string[] => {
     const northFile = getNorthFile1Space(
         file + rank,
@@ -26,16 +28,29 @@ export const getAlgebraicKingMoves = (
         boardPositions,
         activePlayer
     );
+
+    if (isKingSideCastleAvailable) {
+        const castlingPosition = activePlayer === "white" ? "g1" : "g8";
+        eastRank.push(castlingPosition);
+    }
+
     const southFile = getSouthFile1Space(
         file + rank,
         boardPositions,
         activePlayer
     );
+
     const westRank = getWestRank1Space(
         file + rank,
         boardPositions,
         activePlayer
     );
+
+    if (isQueenSideCastleAvailable) {
+        const castlingPosition = activePlayer === "white" ? "c1" : "c8";
+        westRank.push(castlingPosition);
+    }
+
     const northEastDiagonal = getNorthEastDiagonal1Space(
         file + rank,
         boardPositions,

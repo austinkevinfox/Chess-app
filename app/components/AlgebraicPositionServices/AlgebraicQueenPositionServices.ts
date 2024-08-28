@@ -41,8 +41,6 @@ export const getAlgebraicQueenMoves = (
         activePlayer
     );
 
-    console.log("westRank", westRank);
-
     return [
         ...northFile,
         ...eastRank,

@@ -1,5 +1,7 @@
-import { FILE_LETTERS } from "./AlgebraicNotationConstants";
+import { Files } from "./AlgebraicNotationConstants";
 import { BoardPosition } from "../Interfaces";
+
+declare type FileType = keyof typeof Files;
 
 export const getNorthFile = (
     origin: string,
@@ -106,11 +108,11 @@ const getDiagonal = (
     isLimit1Space = false
 ) => {
     const [originFileString, originRankString] = origin.split("");
-    const originFileIndex = FILE_LETTERS.indexOf(originFileString);
+    const originFileIndex = Files[originFileString as FileType];
     const originRank = parseInt(originRankString);
     let nextFileIndex = originFileIndex + fileIncrement;
     let nextRank = originRank + rankIncrement;
-    let nextNotation = FILE_LETTERS[nextFileIndex] + nextRank;
+    let nextNotation = Files[nextFileIndex] + nextRank;
     let nextPosition = boardPositions.find(
         (position) => position.algebraicNotation === nextNotation
     );
@@ -123,7 +125,7 @@ const getDiagonal = (
             diagonal.push(nextPosition.algebraicNotation);
             nextFileIndex += fileIncrement;
             nextRank += rankIncrement;
-            nextNotation = FILE_LETTERS[nextFileIndex] + nextRank;
+            nextNotation = Files[nextFileIndex] + nextRank;
             nextPosition = boardPositions.find(
                 (position) => position.algebraicNotation === nextNotation
             );
@@ -183,9 +185,9 @@ const getRankLine = (
     isLimit1Space = false
 ) => {
     const [originFileString, originRankString] = origin.split("");
-    const originFileIndex = FILE_LETTERS.indexOf(originFileString);
+    const originFileIndex = Files[originFileString as FileType];
     let nextFileIndex = originFileIndex + fileIncrement;
-    let nextNotation = FILE_LETTERS[nextFileIndex] + originRankString;
+    let nextNotation = Files[nextFileIndex] + originRankString;
     let nextPosition = boardPositions.find(
         (position) => position.algebraicNotation === nextNotation
     );
@@ -197,7 +199,7 @@ const getRankLine = (
         if (nextPosition.piece === null) {
             rankLine.push(nextPosition.algebraicNotation);
             nextFileIndex += fileIncrement;
-            nextNotation = FILE_LETTERS[nextFileIndex] + originRankString;
+            nextNotation = Files[nextFileIndex] + originRankString;
             nextPosition = boardPositions.find(
                 (position) => position.algebraicNotation === nextNotation
             );
