@@ -12,8 +12,7 @@ import {
 } from "./Interfaces";
 import { initialBoardPositions } from "./AlgebraicPositionServices/AlgebraicNotationConstants";
 import SidePanel from "./SidePanel";
-import { getKnightThreats } from "./AlgebraicPositionServices/AlgebraicKnightPositionServices";
-import { getBishopThreats } from "./AlgebraicPositionServices/AlgebraicBishopPositionServices";
+import { getThreatsToKing } from "./AlgebraicPositionServices/AlgebraicKingPositionServices";
 
 const Game = () => {
     const [gameState, setGameState] = useState<GameInterface>({
@@ -26,7 +25,7 @@ const Game = () => {
     const [checkMessages, setCheckMessages] = useState<string[] | null>(null);
 
     useEffect(() => {
-        checkKingSafety();
+        findCheckingThreats();
     }, [gameState]);
 
     const getNextPlayer = (): string =>
@@ -49,26 +48,19 @@ const Game = () => {
         }
     };
 
-    const checkKingSafety = (): void => {
-        const kingSquareNotation = getKingSquare();
+    const findCheckingThreats = (): void => {
+        const threats = getThreatsToKing({
+            boardPositions: gameState.boardPositions,
+            activePlayer: gameState.activePlayer,
+        });
         const checkingPlayer = getNextPlayer();
-        const knightThreats = getKnightThreats(
-            kingSquareNotation,
-            gameState.boardPositions,
-            gameState.activePlayer
-        );
-        const bishopThreats = getBishopThreats(
-            kingSquareNotation,
-            gameState.boardPositions,
-            gameState.activePlayer
-        );
         let tmpCheckMessages: string[] = [];
 
-        if (knightThreats.length) {
+        if (threats.knightThreats.length) {
             tmpCheckMessages.push(`${checkingPlayer} knight checks`);
         }
 
-        if (bishopThreats.length) {
+        if (threats.bishopThreats.length) {
             tmpCheckMessages.push(`${checkingPlayer} bishop checks`);
         }
 
@@ -77,16 +69,6 @@ const Game = () => {
         } else {
             setCheckMessages(null);
         }
-    };
-
-    const getKingSquare = (): string => {
-        const tmpGameState = { ...gameState };
-        const kingPosition = tmpGameState.boardPositions.find(
-            (position) =>
-                position.piece?.name === "king" &&
-                position.piece?.color === tmpGameState.activePlayer
-        );
-        return kingPosition!.algebraicNotation;
     };
 
     const onCastle = (
@@ -149,7 +131,11 @@ const Game = () => {
     return (
         <>
             <ControlsModal toggleRankAndFile={toggleRankAndFile} />
-            <div className={`h-4 ${checkMessages?.length ? "visible" : "invisible"}`}>
+            <div
+                className={`h-4 ${
+                    checkMessages?.length ? "visible" : "invisible"
+                }`}
+            >
                 {checkMessages?.length &&
                     checkMessages.map((cMessage, index) => (
                         <div key={`check-message-${index}`}>{cMessage}</div>
