@@ -70,7 +70,12 @@ const Board = ({
         }
 
         if (pieceToMove === "knight") {
-            targetAlgebraicNotations = getAlgebraicKnightMoves(file, rank);
+            targetAlgebraicNotations = getAlgebraicKnightMoves(
+                file,
+                rank,
+                tmpPositions,
+                activePlayer
+            );
             targetAlgebraicNotations = targetAlgebraicNotations.filter(
                 (notation) => {
                     let position = tmpPositions.find(

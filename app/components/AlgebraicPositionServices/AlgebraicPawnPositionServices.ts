@@ -6,6 +6,7 @@ import {
     getNorthWestDiagonal1Space,
     getSouthEastDiagonal1Space,
     getSouthWestDiagonal1Space,
+    omitKingExposingThreats,
 } from "./AlgebraicPositionServices";
 
 export const getAlgebraicPawnMoves = (
@@ -108,6 +109,14 @@ export const getAlgebraicPawnMoves = (
             pawnMoves = [...pawnMoves, ...southWestDiagonal];
         }
     }
+
+    pawnMoves = omitKingExposingThreats(
+        file,
+        rank,
+        pawnMoves,
+        boardPositions,
+        activePlayer
+    );
 
     return pawnMoves;
 };

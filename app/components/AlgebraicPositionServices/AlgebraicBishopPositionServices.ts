@@ -4,6 +4,7 @@ import {
     getNorthWestDiagonal,
     getSouthEastDiagonal,
     getSouthWestDiagonal,
+    omitKingExposingThreats,
 } from "./AlgebraicPositionServices";
 
 export const getAlgebraicBishopMoves = (
@@ -33,12 +34,22 @@ export const getAlgebraicBishopMoves = (
         activePlayer
     );
 
-    return [
+    let bishopMoves = [
         ...northWestDiagonal,
         ...northEastDiagonal,
         ...southWestDiagonal,
         ...southEastDiagonal,
     ];
+
+    bishopMoves = omitKingExposingThreats(
+        file,
+        rank,
+        bishopMoves,
+        boardPositions,
+        activePlayer
+    );
+
+    return bishopMoves;
 };
 
 export const getBishopThreats = (

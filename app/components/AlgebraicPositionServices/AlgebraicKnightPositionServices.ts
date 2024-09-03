@@ -1,13 +1,16 @@
 import { BoardPosition } from "../Interfaces";
 import { Files } from "./AlgebraicNotationConstants";
+import { omitKingExposingThreats } from "./AlgebraicPositionServices";
 
 declare type FileType = keyof typeof Files;
 
 export const getAlgebraicKnightMoves = (
     file: string,
-    rank: string
+    rank: string,
+    boardPositions: BoardPosition[],
+    activePlayer: string
 ): string[] => {
-    let targetAlgebraicNotations: string[] = [];
+    let knightMoves: string[] = [];
     const fileIndex = Files[file as FileType];
     const rankNumber = parseInt(rank);
 
@@ -22,10 +25,7 @@ export const getAlgebraicKnightMoves = (
                         rankNumber,
                         step
                     );
-                    targetAlgebraicNotations = [
-                        ...targetAlgebraicNotations,
-                        ...newPositions,
-                    ];
+                    knightMoves = [...knightMoves, ...newPositions];
                 });
             } else {
                 [-2, 2].forEach((step) => {
@@ -34,16 +34,21 @@ export const getAlgebraicKnightMoves = (
                         rankNumber,
                         step
                     );
-                    targetAlgebraicNotations = [
-                        ...targetAlgebraicNotations,
-                        ...newPositions,
-                    ];
+                    knightMoves = [...knightMoves, ...newPositions];
                 });
             }
         }
     });
 
-    return targetAlgebraicNotations;
+    knightMoves = omitKingExposingThreats(
+        file,
+        rank,
+        knightMoves,
+        boardPositions,
+        activePlayer
+    );
+
+    return knightMoves;
 };
 
 export const getKnightThreats = (
@@ -54,7 +59,12 @@ export const getKnightThreats = (
     let knightThreats: string[] = [];
     const tmpPositions = [...positions];
     const [file, rank] = kingSquareNotation.split("");
-    const algebraicKnightNotations = getAlgebraicKnightMoves(file, rank);
+    const algebraicKnightNotations = getAlgebraicKnightMoves(
+        file,
+        rank,
+        positions,
+        activePlayer
+    );
     algebraicKnightNotations.forEach((notation) => {
         const knightPosition = tmpPositions.find(
             (position) =>

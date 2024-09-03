@@ -35,14 +35,14 @@ export const getRookThreats = (
         activePlayer
     );
     algebraicRookNotations.forEach((notation) => {
-        const bishopPosition = tmpPositions.find(
+        const rookPosition = tmpPositions.find(
             (position) =>
                 position.algebraicNotation === notation &&
                 position.piece?.name === "rook" &&
                 position.piece?.color !== activePlayer
         );
-        if (bishopPosition) {
-            rookThreats.push(bishopPosition.algebraicNotation);
+        if (rookPosition) {
+            rookThreats.push(rookPosition.algebraicNotation);
         }
     });
 

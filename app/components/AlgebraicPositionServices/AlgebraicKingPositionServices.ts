@@ -12,6 +12,8 @@ import {
 } from "./AlgebraicPositionServices";
 import { getKnightThreats } from "./AlgebraicKnightPositionServices";
 import { getBishopThreats } from "./AlgebraicBishopPositionServices";
+import { getRookThreats } from "./AlgebraicRookPositionServices";
+import { getQueenThreats } from "./AlgebraicQueenPositionServices";
 declare type FileType = keyof typeof Files;
 
 export const getAlgebraicKingMoves = (
@@ -100,7 +102,62 @@ export const getAlgebraicKingMoves = (
         squaresUnderAttack.push(nextFile! + nextRank!);
     });
 
-    return [
+    // Get squares adjacent to king and threatened by rook
+    threats.rookThreats.forEach((rookNotation) => {
+        const [rookFileStr, rookRankStr] = rookNotation.split("");
+        const rookFileIndex = Files[rookFileStr as FileType];
+        const rookRank = parseInt(rookRankStr);
+
+        if (kingFileIndex === rookFileIndex) {
+            const rankDirection: string =
+                kingRank < rookRank ? "north" : "south";
+            const nextRankIncrement = rankDirection === "south" ? -1 : 1;
+            const nextRank = kingRank + nextRankIncrement;
+            squaresUnderAttack.push(rookFileStr + nextRank);
+        }
+
+        if (kingRank === rookRank) {
+            const fileDirection: string =
+                kingFileIndex < rookFileIndex ? "west" : "east";
+            const nextFileIncrement = fileDirection === "east" ? -1 : 1;
+            const nextFile: string = Files[kingFileIndex + nextFileIncrement];
+            squaresUnderAttack.push(nextFile + rookRank);
+        }
+    });
+
+    // Get squares adjacent to king and threatened by queen
+    threats.queenThreats.forEach((queenNotation) => {
+        const [queenFileStr, queenRankStr] = queenNotation.split("");
+        const queenFileIndex = Files[queenFileStr as FileType];
+        const queenRank = parseInt(queenRankStr);
+
+        if (kingFileIndex === queenFileIndex) {
+            const rankDirection: string =
+                kingRank < queenRank ? "north" : "south";
+            const nextRankIncrement = rankDirection === "south" ? -1 : 1;
+            const nextRank = kingRank + nextRankIncrement;
+            squaresUnderAttack.push(queenFileStr + nextRank);
+        } else if (kingRank === queenRank) {
+            const fileDirection: string =
+                kingFileIndex < queenFileIndex ? "west" : "east";
+            const nextFileIncrement = fileDirection === "east" ? -1 : 1;
+            const nextFile: string = Files[kingFileIndex + nextFileIncrement];
+            squaresUnderAttack.push(nextFile + kingRank);
+        } else {
+            // Examine diagonals
+            const fileDirection: string =
+                kingFileIndex < queenFileIndex ? "west" : "east";
+            const rankDirection: string =
+                kingRank < queenRank ? "north" : "south";
+            const nextFileIncrement = fileDirection === "east" ? -1 : 1;
+            const nextFile: string = Files[kingFileIndex + nextFileIncrement];
+            const nextRankIncrement = rankDirection === "south" ? -1 : 1;
+            const nextRank = kingRank + nextRankIncrement;
+            squaresUnderAttack.push(nextFile! + nextRank!);
+        }
+    });
+
+    let kingMoves = [
         ...northFile,
         ...eastRank,
         ...southFile,
@@ -109,12 +166,23 @@ export const getAlgebraicKingMoves = (
         ...northWestDiagonal,
         ...southEastDiagonal,
         ...southWestDiagonal,
-    ].filter((square) => !squaresUnderAttack.includes(square));
+    ];
+
+    kingMoves = getMovesWithoutPawnThreats(
+        kingMoves,
+        boardPositions,
+        activePlayer
+    );
+
+    return kingMoves.filter((square) => !squaresUnderAttack.includes(square));
 };
 
 interface Threats {
+    pawnThreats: string[];
     knightThreats: string[];
     bishopThreats: string[];
+    rookThreats: string[];
+    queenThreats: string[];
 }
 export const getThreatsToKing = ({
     boardPositions,
@@ -123,28 +191,42 @@ export const getThreatsToKing = ({
     boardPositions: BoardPosition[];
     activePlayer: string;
 }): Threats => {
-    let threats: Threats = { knightThreats: [], bishopThreats: [] };
+    let threats: Threats = {
+        pawnThreats: [],
+        knightThreats: [],
+        bishopThreats: [],
+        rookThreats: [],
+        queenThreats: [],
+    };
     const kingSquareNotation = getKingSquare({
         boardPositions,
         activePlayer,
     });
-    const knightThreats = getKnightThreats(
+    threats.knightThreats = getKnightThreats(
         kingSquareNotation,
         boardPositions,
         activePlayer
     );
-    threats.knightThreats = knightThreats;
-    const bishopThreats = getBishopThreats(
+    threats.bishopThreats = getBishopThreats(
         kingSquareNotation,
         boardPositions,
         activePlayer
     );
-    threats.bishopThreats = bishopThreats;
+    threats.rookThreats = getRookThreats(
+        kingSquareNotation,
+        boardPositions,
+        activePlayer
+    );
+    threats.queenThreats = getQueenThreats(
+        kingSquareNotation,
+        boardPositions,
+        activePlayer
+    );
 
     return threats;
 };
 
-const getKingSquare = ({
+export const getKingSquare = ({
     boardPositions,
     activePlayer,
 }: {
@@ -157,4 +239,43 @@ const getKingSquare = ({
             position.piece?.color === activePlayer
     );
     return kingPosition!.algebraicNotation;
+};
+
+const getMovesWithoutPawnThreats = (
+    kingMoves: string[],
+    positions: BoardPosition[],
+    activePlayer: string
+): string[] => {
+    let safeMoves: string[] = [...kingMoves];
+
+    kingMoves.forEach((kingMove) => {
+        const [newFileStr, newRankStr] = kingMove.split("");
+        const newFileIndex = Files[newFileStr as FileType];
+        const newRank = parseInt(newRankStr);
+        const rankIncrement = activePlayer === "white" ? 1 : -1;
+        const pawnRank = newRank + rankIncrement;
+        if (pawnRank <= 8 && pawnRank >= 1) {
+            [-1, 1].forEach((fileIncrement) => {
+                const pawnFile = Files[newFileIndex + fileIncrement];
+                if (pawnFile) {
+                    const pawnPosition = pawnFile + pawnRank;
+                    const tmpPosition = positions.find(
+                        (position) =>
+                            position.algebraicNotation === pawnPosition
+                    );
+                    if (
+                        tmpPosition?.piece?.name === "pawn" &&
+                        tmpPosition?.piece?.color !== activePlayer
+                    ) {
+                        console.log("threatening pawn", pawnPosition);
+                        safeMoves = safeMoves.filter(
+                            (notation) => notation !== kingMove
+                        );
+                    }
+                }
+            });
+        }
+    });
+
+    return safeMoves;
 };

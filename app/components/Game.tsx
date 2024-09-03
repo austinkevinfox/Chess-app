@@ -20,16 +20,18 @@ const Game = () => {
         boardPositions: initialBoardPositions,
     });
     const [isRankAndFileVisible, setIsRankAndFileVisible] = useState(false);
-    const [capturedWhite, setCapturedWhite] = useState<string[]>([]);
-    const [capturedBlack, setCapturedBlack] = useState<string[]>([]);
+    const [capturedWhite, setCapturedWhite] = useState<Piece[]>([]);
+    const [capturedBlack, setCapturedBlack] = useState<Piece[]>([]);
     const [checkMessages, setCheckMessages] = useState<string[] | null>(null);
 
     useEffect(() => {
-        findCheckingThreats();
+        if (gameState?.activePlayer && gameState?.boardPositions) {
+            findCheckingThreats();
+        }
     }, [gameState]);
 
     const getNextPlayer = (): string =>
-        gameState.activePlayer === "white" ? "black" : "white";
+        gameState!.activePlayer === "white" ? "black" : "white";
 
     const toggleRankAndFile = (): void => {
         let tmpVisibility = isRankAndFileVisible;
@@ -39,19 +41,19 @@ const Game = () => {
     const capturePiece = (dropPosition: BoardPosition): void => {
         if (dropPosition.piece!.color === "white") {
             let tmpCapturedWhitePieces = [...capturedWhite];
-            tmpCapturedWhitePieces.push(dropPosition.piece!.code);
+            tmpCapturedWhitePieces.push(dropPosition.piece!);
             setCapturedWhite(tmpCapturedWhitePieces);
         } else {
             let tmpCapturedPieces = [...capturedBlack];
-            tmpCapturedPieces.push(dropPosition.piece!.code);
+            tmpCapturedPieces.push(dropPosition.piece!);
             setCapturedBlack(tmpCapturedPieces);
         }
     };
 
     const findCheckingThreats = (): void => {
         const threats = getThreatsToKing({
-            boardPositions: gameState.boardPositions,
-            activePlayer: gameState.activePlayer,
+            boardPositions: gameState!.boardPositions,
+            activePlayer: gameState!.activePlayer,
         });
         const checkingPlayer = getNextPlayer();
         let tmpCheckMessages: string[] = [];
@@ -62,6 +64,14 @@ const Game = () => {
 
         if (threats.bishopThreats.length) {
             tmpCheckMessages.push(`${checkingPlayer} bishop checks`);
+        }
+
+        if (threats.rookThreats.length) {
+            tmpCheckMessages.push(`${checkingPlayer} rook checks`);
+        }
+
+        if (threats.queenThreats.length) {
+            tmpCheckMessages.push(`${checkingPlayer} queen checks`);
         }
 
         if (tmpCheckMessages.length) {
@@ -77,7 +87,7 @@ const Game = () => {
         indices: number[]
     ): void => {
         const [kingSourceIndex, kingDropId, rookDropId, cornerId] = indices;
-        let tmpGameState = { ...gameState };
+        let tmpGameState = { ...gameState! };
         let tmpBoardPositions: BoardPosition[] = tmpGameState.boardPositions;
         let kingDropPosition: BoardPosition =
             Object.values(tmpBoardPositions)[kingDropId];
@@ -99,7 +109,7 @@ const Game = () => {
         pieceInDrag: number,
         enPassanNotation: EnPassan | null
     ) => {
-        let tmpGameState = { ...gameState };
+        let tmpGameState = { ...gameState! };
         let tmpBoardPositions: BoardPosition[] = tmpGameState.boardPositions;
         let dropPosition: BoardPosition = Object.values(tmpBoardPositions)[id];
         let emptyPosition: BoardPosition =
@@ -128,7 +138,7 @@ const Game = () => {
         setGameState(tmpGameState);
     };
 
-    return (
+    return gameState?.activePlayer && gameState.boardPositions ? (
         <>
             <ControlsModal toggleRankAndFile={toggleRankAndFile} />
             <div
@@ -142,30 +152,26 @@ const Game = () => {
                     ))}
             </div>
             <div className="container mx-auto my-2 w-fit flex justify-center">
-                <SidePanel
-                    color="black"
-                    isActive={gameState.activePlayer === "black"}
-                >
+                <SidePanel isActive={gameState!.activePlayer === "black"}>
                     {capturedWhite}
                 </SidePanel>
                 <div className="grid grid-cols-[25px, 1fr] gap-4">
                     <FileRow isVisible={isRankAndFileVisible} />
                     <RankColumn isVisible={isRankAndFileVisible} />
                     <Board
-                        activePlayer={gameState.activePlayer}
-                        positions={gameState.boardPositions}
+                        activePlayer={gameState!.activePlayer}
+                        positions={gameState!.boardPositions}
                         onPiecePositionChange={updatePosition}
                         onCastle={onCastle}
                     />
                 </div>
-                <SidePanel
-                    color="white"
-                    isActive={gameState.activePlayer === "white"}
-                >
+                <SidePanel isActive={gameState!.activePlayer === "white"}>
                     {capturedBlack}
                 </SidePanel>
             </div>
         </>
+    ) : (
+        <div>Loading...</div>
     );
 };
 

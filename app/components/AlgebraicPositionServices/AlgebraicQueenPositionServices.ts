@@ -52,3 +52,32 @@ export const getAlgebraicQueenMoves = (
         ...southEastDiagonal,
     ];
 };
+
+export const getQueenThreats = (
+    kingSquareNotation: string,
+    positions: BoardPosition[],
+    activePlayer: string
+): string[] => {
+    let queenThreats: string[] = [];
+    const tmpPositions = [...positions];
+    const [file, rank] = kingSquareNotation.split("");
+    const algebraicQueenNotations = getAlgebraicQueenMoves(
+        file,
+        rank,
+        positions,
+        activePlayer
+    );
+    algebraicQueenNotations.forEach((notation) => {
+        const queenPosition = tmpPositions.find(
+            (position) =>
+                position.algebraicNotation === notation &&
+                position.piece?.name === "queen" &&
+                position.piece?.color !== activePlayer
+        );
+        if (queenPosition) {
+            queenThreats.push(queenPosition.algebraicNotation);
+        }
+    });
+
+    return queenThreats;
+};
