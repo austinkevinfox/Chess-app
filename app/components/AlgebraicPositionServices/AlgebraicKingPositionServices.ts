@@ -241,6 +241,28 @@ export const getKingSquare = ({
     return kingPosition!.algebraicNotation;
 };
 
+interface isMateProps {
+    boardPositions: BoardPosition[];
+    activePlayer: string;
+}
+
+export const isMate = ({
+    boardPositions,
+    activePlayer,
+}: isMateProps): boolean => {
+    const kingSquare = getKingSquare({ boardPositions, activePlayer });
+    const [file, rank] = kingSquare.split("");
+    const kingMoves = getAlgebraicKingMoves(
+        file,
+        rank,
+        boardPositions,
+        activePlayer,
+        false,
+        false
+    );
+    return kingMoves.length === 0;
+};
+
 const getMovesWithoutPawnThreats = (
     kingMoves: string[],
     positions: BoardPosition[],

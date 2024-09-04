@@ -12,21 +12,30 @@ import {
 } from "./Interfaces";
 import { initialBoardPositions } from "./AlgebraicPositionServices/AlgebraicNotationConstants";
 import SidePanel from "./SidePanel";
-import { getThreatsToKing } from "./AlgebraicPositionServices/AlgebraicKingPositionServices";
+import {
+    isMate,
+    getThreatsToKing,
+} from "./AlgebraicPositionServices/AlgebraicKingPositionServices";
 
 const Game = () => {
     const [gameState, setGameState] = useState<GameInterface>({
-        activePlayer: "white",
-        boardPositions: initialBoardPositions,
+        activePlayer: "",
+        boardPositions: [],
     });
     const [isRankAndFileVisible, setIsRankAndFileVisible] = useState(false);
     const [capturedWhite, setCapturedWhite] = useState<Piece[]>([]);
     const [capturedBlack, setCapturedBlack] = useState<Piece[]>([]);
     const [checkMessages, setCheckMessages] = useState<string[] | null>(null);
+    const [winner, setWinner] = useState<string>("");
 
     useEffect(() => {
         if (gameState?.activePlayer && gameState?.boardPositions) {
             findCheckingThreats();
+        } else {
+            setGameState({
+                activePlayer: "white",
+                boardPositions: initialBoardPositions,
+            });
         }
     }, [gameState]);
 
@@ -75,6 +84,18 @@ const Game = () => {
         }
 
         if (tmpCheckMessages.length) {
+            if (
+                isMate({
+                    boardPositions: gameState.boardPositions,
+                    activePlayer: gameState.activePlayer,
+                })
+            ) {
+                // let tmpGameState = { ...gameState};
+                // tmpGameState.activePlayer = 'check-mate';
+                // setGameState(tmpGameState);
+                tmpCheckMessages.push("CHECK MATE!");
+                setWinner(gameState.activePlayer);
+            }
             setCheckMessages(tmpCheckMessages);
         } else {
             setCheckMessages(null);
@@ -138,7 +159,8 @@ const Game = () => {
         setGameState(tmpGameState);
     };
 
-    return gameState?.activePlayer && gameState.boardPositions ? (
+    return gameState?.activePlayer.length > 0 &&
+        gameState.boardPositions.length === 64 ? (
         <>
             <ControlsModal toggleRankAndFile={toggleRankAndFile} />
             <div
@@ -152,9 +174,13 @@ const Game = () => {
                     ))}
             </div>
             <div className="container mx-auto my-2 w-fit flex justify-center">
-                <SidePanel isActive={gameState!.activePlayer === "black"}>
-                    {capturedWhite}
-                </SidePanel>
+                <SidePanel
+                    color="black"
+                    activePlayer={gameState.activePlayer}
+                    winner={winner}
+                    capturedWhite={capturedWhite}
+                    capturedBlack={capturedBlack}
+                />
                 <div className="grid grid-cols-[25px, 1fr] gap-4">
                     <FileRow isVisible={isRankAndFileVisible} />
                     <RankColumn isVisible={isRankAndFileVisible} />
@@ -165,9 +191,13 @@ const Game = () => {
                         onCastle={onCastle}
                     />
                 </div>
-                <SidePanel isActive={gameState!.activePlayer === "white"}>
-                    {capturedBlack}
-                </SidePanel>
+                <SidePanel
+                    color="white"
+                    activePlayer={gameState.activePlayer}
+                    winner={winner}
+                    capturedWhite={capturedWhite}
+                    capturedBlack={capturedBlack}
+                />
             </div>
         </>
     ) : (

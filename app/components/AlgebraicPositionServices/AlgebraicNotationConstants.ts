@@ -9,6 +9,13 @@ export enum Files {
     g,
     h,
 }
+export enum PieceValues {
+    pawn = 1,
+    knight = 3,
+    bishop = 3,
+    rook = 5,
+    queen = 9,
+}
 export const initialBoardPositions: BoardPosition[] = [
     {
         algebraicNotation: "a8",

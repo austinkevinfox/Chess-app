@@ -1,46 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Piece } from "./Interfaces";
 import CapturedPieces from "./CapturedPieces";
+import Score from "./Score";
+import Clock from "./Clock";
 
 interface SidePanelProps {
-    isActive: boolean;
-    children: Piece[];
+    activePlayer: string;
+    color: string;
+    winner: string;
+    capturedWhite: Piece[];
+    capturedBlack: Piece[];
 }
 
-const SidePanel = ({ isActive, children }: SidePanelProps) => {
-    const [time, setTime] = useState(0);
-
-    useEffect(() => {
-        let interval: ReturnType<typeof setInterval> = setInterval(() => null);
-
-        if (isActive) {
-            if (time >= 3600000) {
-                clearInterval(interval);
-            } else {
-                interval = setInterval(() => {
-                    setTime((prevTime) => prevTime + 1000);
-                }, 1000);
-            }
-        } else {
-            clearInterval(interval);
-        }
-
-        return () => clearInterval(interval);
-    }, [isActive, time]);
+const SidePanel = ({
+    activePlayer,
+    color,
+    winner,
+    capturedWhite,
+    capturedBlack,
+}: SidePanelProps) => {
+    const isActive = activePlayer === color && winner.length === 0;
+    const children = color === "white" ? capturedBlack : capturedWhite;
 
     return (
         <div className="mx-4 my-20">
             <div
-                className={`h-2 ${isActive ? "bg-green-300" : "bg-slate-300"}`}
+                className={`h-2 rounded-t-md ${
+                    isActive && winner.length === 0
+                        ? "bg-green-300"
+                        : "bg-slate-300"
+                }`}
             />
-            <div className="p-4 bg-orange-50 h-auto">
-                <div className="border-solid border-2 px-1 w-fit">
-                    <span>
-                        {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:
-                    </span>
-                    <span>
-                        {("0" + Math.floor((time / 1000) % 60)).slice(-2)}
-                    </span>
+            <div className="p-4 bg-orange-50 h-auto min-h-96 rounded-b-md">
+                <div className="flex justify-between">
+                    <Clock isActive={isActive} />
+                    <Score
+                        color={color}
+                        capturedWhite={capturedWhite}
+                        capturedBlack={capturedBlack}
+                    />
                 </div>
                 <div className="flex flex-col w-40">
                     {children.filter((piece) => piece.name === "pawn")?.length >

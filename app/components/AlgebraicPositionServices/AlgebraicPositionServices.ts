@@ -1,7 +1,6 @@
 import { Files } from "./AlgebraicNotationConstants";
 import { BoardPosition } from "../Interfaces";
 import { getKingSquare } from "./AlgebraicKingPositionServices";
-import { getAlgebraicBishopMoves } from "./AlgebraicBishopPositionServices";
 
 declare type AttackerPositions = {
     bishop: string[];
