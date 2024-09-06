@@ -22,6 +22,7 @@ const Game = () => {
         activePlayer: "",
         boardPositions: [],
     });
+    const [moveRecords, setMoveRecords] = useState<string[]>([]);
     const [isRankAndFileVisible, setIsRankAndFileVisible] = useState(false);
     const [capturedWhite, setCapturedWhite] = useState<Piece[]>([]);
     const [capturedBlack, setCapturedBlack] = useState<Piece[]>([]);
@@ -135,8 +136,13 @@ const Game = () => {
         let dropPosition: BoardPosition = Object.values(tmpBoardPositions)[id];
         let emptyPosition: BoardPosition =
             Object.values(tmpBoardPositions)[pieceInDrag];
+        let activePieceSymbol = emptyPosition.piece?.symbol;
+        let notationJunction = "";
+        let capturingSymbol = "";
 
         if (dropPosition?.piece) {
+            notationJunction = "x";
+            capturingSymbol = emptyPosition.piece!.symbol;
             capturePiece(dropPosition);
         }
         if (enPassanNotation?.captureSquareNotation) {
@@ -146,10 +152,24 @@ const Game = () => {
                     enPassanNotation.captureSquareNotation
             );
             if (enPassanCapturePosition) {
+                notationJunction = "x";
                 capturePiece(enPassanCapturePosition);
                 enPassanCapturePosition.piece = null;
             }
         }
+
+        let tmpMoveRecords = [...moveRecords];
+        let newMove = "";
+        if (activePieceSymbol === "P") {
+            if (notationJunction.length > 0) {
+                newMove = `${emptyPosition.algebraicNotation}${notationJunction}${dropPosition.algebraicNotation}`;
+            } else {
+                newMove = dropPosition.algebraicNotation;
+            }
+        } else {
+            newMove = `${activePieceSymbol}${notationJunction}${dropPosition.algebraicNotation}`;
+        }
+        tmpMoveRecords.push(newMove);
 
         dropPosition.piece = piece;
         emptyPosition.piece = null;
@@ -157,6 +177,7 @@ const Game = () => {
         tmpGameState.activePlayer = getNextPlayer();
 
         setGameState(tmpGameState);
+        setMoveRecords(tmpMoveRecords);
     };
 
     return gameState?.activePlayer.length > 0 &&
@@ -191,13 +212,22 @@ const Game = () => {
                         onCastle={onCastle}
                     />
                 </div>
-                <SidePanel
-                    color="white"
-                    activePlayer={gameState.activePlayer}
-                    winner={winner}
-                    capturedWhite={capturedWhite}
-                    capturedBlack={capturedBlack}
-                />
+                <div>
+                    <SidePanel
+                        color="white"
+                        activePlayer={gameState.activePlayer}
+                        winner={winner}
+                        capturedWhite={capturedWhite}
+                        capturedBlack={capturedBlack}
+                    />
+                    <div className="flex justify-end">
+                        <ol className="list-decimal mr-10">
+                            {moveRecords.map((record, index) => (
+                                <li key={`move-${index + 1}`}>{record}</li>
+                            ))}
+                        </ol>
+                    </div>
+                </div>
             </div>
         </>
     ) : (

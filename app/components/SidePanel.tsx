@@ -31,7 +31,7 @@ const SidePanel = ({
                         : "bg-slate-300"
                 }`}
             />
-            <div className="p-4 bg-orange-50 h-auto min-h-96 rounded-b-md">
+            <div className="p-4 bg-orange-50 h-auto rounded-b-md">
                 <div className="flex justify-between">
                     <Clock isActive={isActive} />
                     <Score

@@ -31,7 +31,7 @@ const Square = ({
                 isDropTarget ? "bg-green-400" : backgroundColorClass
             }`}
         >
-            <span className={`text-xs`}>{id}</span>
+            {/* <span className={`text-xs`}>{id}</span> */}
 
             <Piece
                 color={piece?.color!}

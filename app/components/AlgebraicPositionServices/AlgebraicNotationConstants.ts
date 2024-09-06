@@ -19,99 +19,67 @@ export enum PieceValues {
 export const initialBoardPositions: BoardPosition[] = [
     {
         algebraicNotation: "a8",
-        piece: {
-            color: "black",
-            name: "rook",
-            code: "&#9820;",
-        },
+        piece: { color: "black", name: "rook", symbol: "R", code: "&#9820;" },
     },
     {
         algebraicNotation: "b8",
-        piece: {
-            color: "black",
-            name: "knight",
-            code: "&#9822;",
-        },
+        piece: { color: "black", name: "knight", symbol: "N", code: "&#9822;" },
     },
     {
         algebraicNotation: "c8",
-        piece: {
-            color: "black",
-            name: "bishop",
-            code: "&#9821;",
-        },
+        piece: { color: "black", name: "bishop", symbol: "B", code: "&#9821;" },
     },
     {
         algebraicNotation: "d8",
-        piece: {
-            color: "black",
-            name: "queen",
-            code: "&#9819;",
-        },
+        piece: { color: "black", name: "queen", symbol: "Q", code: "&#9819;" },
     },
     {
         algebraicNotation: "e8",
-        piece: {
-            color: "black",
-            name: "king",
-            code: "&#9818;",
-        },
+        piece: { color: "black", name: "king", symbol: "K", code: "&#9818;" },
     },
     {
         algebraicNotation: "f8",
-        piece: {
-            color: "black",
-            name: "bishop",
-            code: "&#9821;",
-        },
+        piece: { color: "black", name: "bishop", symbol: "B", code: "&#9821;" },
     },
     {
         algebraicNotation: "g8",
-        piece: {
-            color: "black",
-            name: "knight",
-            code: "&#9822;",
-        },
+        piece: { color: "black", name: "knight", symbol: "N", code: "&#9822;" },
     },
     {
         algebraicNotation: "h8",
-        piece: {
-            color: "black",
-            name: "rook",
-            code: "&#9820;",
-        },
+        piece: { color: "black", name: "rook", symbol: "R", code: "&#9820;" },
     },
     {
         algebraicNotation: "a7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "b7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "c7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "d7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "e7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "f7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "g7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "h7",
-        piece: { color: "black", name: "pawn", code: "&#9823" },
+        piece: { color: "black", name: "pawn", symbol: "P", code: "&#9823" },
     },
     {
         algebraicNotation: "a6",
@@ -243,66 +211,66 @@ export const initialBoardPositions: BoardPosition[] = [
     },
     {
         algebraicNotation: "a2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "b2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "c2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "d2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "e2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "f2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "g2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "h2",
-        piece: { color: "white", name: "pawn", code: "&#9817" },
+        piece: { color: "white", name: "pawn", symbol: "P", code: "&#9817" },
     },
     {
         algebraicNotation: "a1",
-        piece: { color: "white", name: "rook", code: "&#9814" },
+        piece: { color: "white", name: "rook", symbol: "R", code: "&#9814" },
     },
     {
         algebraicNotation: "b1",
-        piece: { color: "white", name: "knight", code: "&#9816" },
+        piece: { color: "white", name: "knight", symbol: "N", code: "&#9816" },
     },
     {
         algebraicNotation: "c1",
-        piece: { color: "white", name: "bishop", code: "&#9815" },
+        piece: { color: "white", name: "bishop", symbol: "B", code: "&#9815" },
     },
     {
         algebraicNotation: "d1",
-        piece: { color: "white", name: "queen", code: "&#9813" },
+        piece: { color: "white", name: "queen", symbol: "Q", code: "&#9813" },
     },
     {
         algebraicNotation: "e1",
-        piece: { color: "white", name: "king", code: "&#9812" },
+        piece: { color: "white", name: "king", symbol: "K", code: "&#9812" },
     },
     {
         algebraicNotation: "f1",
-        piece: { color: "white", name: "bishop", code: "&#9815" },
+        piece: { color: "white", name: "bishop", symbol: "B", code: "&#9815" },
     },
     {
         algebraicNotation: "g1",
-        piece: { color: "white", name: "knight", code: "&#9816" },
+        piece: { color: "white", name: "knight", symbol: "N", code: "&#9816" },
     },
     {
         algebraicNotation: "h1",
-        piece: { color: "white", name: "rook", code: "&#9814" },
+        piece: { color: "white", name: "rook", symbol: "R", code: "&#9814" },
     },
 ];

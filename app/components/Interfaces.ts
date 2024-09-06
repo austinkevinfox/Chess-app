@@ -1,7 +1,7 @@
-
 export interface Piece {
     code: string;
     name: "king" | "queen" | "rook" | "bishop" | "knight" | "pawn";
+    symbol: "K" | "Q" | "R" | "B" | "N" | "P";
     color: "white" | "black";
 }
 
