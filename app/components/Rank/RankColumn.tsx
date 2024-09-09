@@ -8,7 +8,7 @@ interface RankColumnProps {
 const RankColumn = ({ isVisible }: RankColumnProps) => {
     return (
         <div
-            className={`px-4 border-solid border-2 border-slate-200 ${
+            className={`px-2 border-solid border-2 border-slate-200 ${
                 isVisible ? "visible" : "invisible"
             }`}
         >

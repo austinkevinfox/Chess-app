@@ -15,7 +15,11 @@ const Piece = ({ color, code, initSquare, activePlayer }: PieceProps) => {
         disabled: color !== activePlayer,
     });
 
-    return code.length ? <div ref={ref}>{decode(code)}</div> : null;
+    return code.length ? (
+        <div ref={ref}>
+            <div className="text-6xl">{decode(code)}</div>
+        </div>
+    ) : null;
 };
 
 export default Piece;

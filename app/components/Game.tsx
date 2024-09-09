@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import Board from "./Board";
 import FileRow from "./File/FileRow";
 import RankColumn from "./Rank/RankColumn";
-import ControlsModal from "./Controls/ControlsModal";
 import {
     Game as GameInterface,
     BoardPosition,
@@ -18,6 +17,7 @@ import {
     getThreatsToKing,
 } from "./AlgebraicPositionServices/AlgebraicKingPositionServices";
 import RecordedMoves from "./RecordedMoves";
+import RankAndFileToggler from "./Controls/RankAndFileToggler";
 
 const Game = () => {
     const [gameState, setGameState] = useState<GameInterface>({
@@ -192,7 +192,6 @@ const Game = () => {
     return gameState?.activePlayer.length > 0 &&
         gameState.boardPositions.length === 64 ? (
         <>
-            <ControlsModal toggleRankAndFile={toggleRankAndFile} />
             <div
                 className={`h-4 ${
                     checkMessages?.length ? "visible" : "invisible"
@@ -211,7 +210,11 @@ const Game = () => {
                     capturedWhite={capturedWhite}
                     capturedBlack={capturedBlack}
                 />
-                <div className="grid grid-cols-[25px, 1fr] gap-4">
+                <div className="grid grid-cols-[10px, 1fr] gap-4">
+                    <RankAndFileToggler
+                        isVisible={isRankAndFileVisible}
+                        onClick={toggleRankAndFile}
+                    />
                     <FileRow isVisible={isRankAndFileVisible} />
                     <RankColumn isVisible={isRankAndFileVisible} />
                     <Board
