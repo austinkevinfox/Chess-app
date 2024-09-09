@@ -7,7 +7,7 @@ interface FileMarkerProps {
 const FilerMarker = ({ id }: FileMarkerProps) => {
   return (
       <div
-          className="w-24 flex items-center justify-center"
+          className="w-20 flex items-center justify-center"
       >
           {id}
       </div>

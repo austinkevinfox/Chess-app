@@ -27,7 +27,7 @@ const Square = ({
     return (
         <div
             ref={ref}
-            className={`w-24 h-24 cursor-pointer flex items-center justify-center text-8xl ${
+            className={`w-20 h-20 cursor-pointer flex items-center justify-center text-8xl ${
                 isDropTarget ? "bg-green-400" : backgroundColorClass
             }`}
         >

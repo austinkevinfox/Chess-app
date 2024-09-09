@@ -19,3 +19,8 @@ export interface EnPassan {
     captureSquareNotation: string;
     landingSquareNotation: string;
 }
+
+export interface MoveRecord {
+    white: string;
+    black: string;
+}

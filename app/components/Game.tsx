@@ -9,6 +9,7 @@ import {
     BoardPosition,
     Piece,
     EnPassan,
+    MoveRecord,
 } from "./Interfaces";
 import { initialBoardPositions } from "./AlgebraicPositionServices/AlgebraicNotationConstants";
 import SidePanel from "./SidePanel";
@@ -16,13 +17,14 @@ import {
     isMate,
     getThreatsToKing,
 } from "./AlgebraicPositionServices/AlgebraicKingPositionServices";
+import RecordedMoves from "./RecordedMoves";
 
 const Game = () => {
     const [gameState, setGameState] = useState<GameInterface>({
         activePlayer: "",
         boardPositions: [],
     });
-    const [moveRecords, setMoveRecords] = useState<string[]>([]);
+    const [moveRecords, setMoveRecords] = useState<MoveRecord[]>([]);
     const [isRankAndFileVisible, setIsRankAndFileVisible] = useState(false);
     const [capturedWhite, setCapturedWhite] = useState<Piece[]>([]);
     const [capturedBlack, setCapturedBlack] = useState<Piece[]>([]);
@@ -169,7 +171,14 @@ const Game = () => {
         } else {
             newMove = `${activePieceSymbol}${notationJunction}${dropPosition.algebraicNotation}`;
         }
-        tmpMoveRecords.push(newMove);
+
+        if (tmpGameState.activePlayer === "white") {
+            const whiteMove: MoveRecord = { white: newMove, black: "" };
+            tmpMoveRecords.push(whiteMove);
+        } else {
+            let blackMove: MoveRecord = tmpMoveRecords.at(-1)!;
+            blackMove.black = newMove;
+        }
 
         dropPosition.piece = piece;
         emptyPosition.piece = null;
@@ -220,13 +229,7 @@ const Game = () => {
                         capturedWhite={capturedWhite}
                         capturedBlack={capturedBlack}
                     />
-                    <div className="flex justify-end">
-                        <ol className="list-decimal mr-10">
-                            {moveRecords.map((record, index) => (
-                                <li key={`move-${index + 1}`}>{record}</li>
-                            ))}
-                        </ol>
-                    </div>
+                    <RecordedMoves moves={moveRecords} />
                 </div>
             </div>
         </>

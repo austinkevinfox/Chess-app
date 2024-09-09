@@ -290,7 +290,7 @@ const Board = ({
                 }
             }}
         >
-            <div className="border-solid border-8 border-slate-600 drop-shadow-2xl">
+            <div className="border-solid border-4 border-slate-600 drop-shadow-2xl">
                 {[0, 1, 2, 3, 4, 5, 6, 7].map((rowId) => (
                     <Row
                         key={rowId}
